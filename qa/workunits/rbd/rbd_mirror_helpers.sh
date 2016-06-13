@@ -140,10 +140,14 @@ setup()
         cd ${TEMPDIR}
     fi
 
+    ceph --cluster ${CLUSTER1} osd pool ls
     ceph --cluster ${CLUSTER1} osd pool create ${POOL} 64 64
     ceph --cluster ${CLUSTER1} osd pool create ${PARENT_POOL} 64 64
+    ceph --cluster ${CLUSTER1} osd pool ls
+    ceph --cluster ${CLUSTER2} osd pool ls
     ceph --cluster ${CLUSTER2} osd pool create ${PARENT_POOL} 64 64
     ceph --cluster ${CLUSTER2} osd pool create ${POOL} 64 64
+    ceph --cluster ${CLUSTER2} osd pool ls
 
     rbd --cluster ${CLUSTER1} mirror pool enable ${POOL} pool
     rbd --cluster ${CLUSTER2} mirror pool enable ${POOL} pool
@@ -170,10 +174,14 @@ cleanup()
         ./mstop.sh ${CLUSTER1}
         ./mstop.sh ${CLUSTER2}
     else
+	ceph --cluster ${CLUSTER1} osd pool ls
         ceph --cluster ${CLUSTER1} osd pool rm ${POOL} ${POOL} --yes-i-really-really-mean-it
         ceph --cluster ${CLUSTER2} osd pool rm ${POOL} ${POOL} --yes-i-really-really-mean-it
+	ceph --cluster ${CLUSTER1} osd pool ls
+	ceph --cluster ${CLUSTER2} osd pool ls
         ceph --cluster ${CLUSTER1} osd pool rm ${PARENT_POOL} ${PARENT_POOL} --yes-i-really-really-mean-it
         ceph --cluster ${CLUSTER2} osd pool rm ${PARENT_POOL} ${PARENT_POOL} --yes-i-really-really-mean-it
+	ceph --cluster ${CLUSTER2} osd pool ls
     fi
     rm -Rf ${TEMPDIR}
 }
